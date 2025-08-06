@@ -14,6 +14,12 @@ app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
+
+
+const listings = require("./routes/listing");
+app.use("/", listings);
+
+
 const mongoURI = "mongodb://127.0.0.1:27017/wanderlust";
 app.use(methodOverride("_method"));
 app.engine("ejs", ejsMate);
@@ -34,14 +40,7 @@ app.get(
   })
 );
 
-const validateListing = (req, res, next) => {
-  const { error } = listingSchema.validate(req.body);
-  if (error) {
-    const msg = error.details.map((el) => el.message).join(",");
-    throw new ExpressError(msg, 400);
-  }
-  next();
-};
+
 const validateReview = (req, res, next) => {
   const { error } = reviewSchema.validate(req.body);
   if (error) {
@@ -51,66 +50,10 @@ const validateReview = (req, res, next) => {
   next();
 };
 
-// New Routes
-app.get("/listings/new", (req, res) => {
-  res.render("listings/new.ejs");
-});
 
-//Create Route
-app.post(
-  "/listings",
-  validateListing,
-  wrapAsync(async (req, res) => {
-    // try {
-    const newListing = new Listing(req.body.listing);
-    await newListing.save();
-    res.redirect("/");
-    // } catch (err) {
-    //   next(err);
-    // }
-  })
-);
+app.use("/listings",listings)
 
-app.get(
-  "/listings/:id",
-  wrapAsync(async (req, res) => {
-    const { id } = req.params;
-    const listing = await Listing.findById(id).populate("review");
-    // console.log("00", listing);
-    res.render("listings/show", { listing });
-  })
-);
-//Edit Route
-app.get(
-  "/listings/:id/edit",
-  validateListing,
-  wrapAsync(async (req, res) => {
-    let { id } = req.params;
-    const listing = await Listing.findById(id);
-    res.render("listings/edit.ejs", { listing });
-  })
-);
 
-//Update Route
-app.put(
-  "/listings/:id",
-  wrapAsync(async (req, res) => {
-    let { id } = req.params;
-    await Listing.findByIdAndUpdate(id, { ...req.body.listing });
-    res.redirect(`/listings/${id}`);
-  })
-);
-
-//Delete Route
-app.delete(
-  "/listings/:id",
-  wrapAsync(async (req, res) => {
-    let { id } = req.params;
-    let deletedListing = await Listing.findByIdAndDelete(id);
-    console.log(deletedListing);
-    res.redirect("/");
-  })
-);
 
 app.post(
   "/listings/:id/reviews",
