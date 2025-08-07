@@ -2,98 +2,62 @@ const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
 const Listing = require("./models/listing");
-const Review = require("./models/review");
+
 const path = require("path");
 const ejsMate = require("ejs-mate");
 const wrapAsync = require("./utils/wrapAsyc");
-const ExpressError = require("./utils/ExpressError");
 const methodOverride = require("method-override");
-const { listingSchema, reviewSchema } = require("./schema");
-
+const session = require("express-session");
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(__dirname, "public")));
 
+const sessionOptions = {
+  secret: "mysupersecretcode",
+  resave: false,
+  saveUninitialized: true,
+  cookie: {
+    expires: Date.now() + 7 * 24 * 60 * 60 *1000, // 1 day
+    maxAge: 7 * 24 * 60 * 60 *1000, // 1 day
+    httpOnly: true,
+  },
+};
 
+app.use(session(sessionOptions));
 const listings = require("./routes/listing");
+const reviews = require("./routes/review");
+const e = require("express");
 app.use("/", listings);
-
 
 const mongoURI = "mongodb://127.0.0.1:27017/wanderlust";
 app.use(methodOverride("_method"));
 app.engine("ejs", ejsMate);
+mongoose.connect(mongoURI).then(() => {
+  console.log("MongoDB connected successfully");
+});
 
-mongoose
-  .connect(mongoURI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
-  .then(() => console.log(" MongoDB connected successfully"))
-  .catch((err) => console.error(" MongoDB connection error:", err));
+// mongoose
+//   .connect(mongoURI, {
+//     useNewUrlParser: true,
+//     useUnifiedTopology: true,
+//   })
+//   .then(() => console.log(" MongoDB connected successfully"))
+//   .catch((err) => console.error(" MongoDB connection error:", err));
 
 app.get(
   "/",
   wrapAsync(async (req, res) => {
     let allListings = await Listing.find({});
-    res.render("listings/index", { allListings });
+    res.render("listings", { allListings });
   })
 );
 
+app.get("/favicon.ico", (req, res) => res.status(204).end());
 
-const validateReview = (req, res, next) => {
-  const { error } = reviewSchema.validate(req.body);
-  if (error) {
-    const msg = error.details.map((el) => el.message).join(",");
-    throw new ExpressError(msg, 400);
-  }
-  next();
-};
-
-
-app.use("/listings",listings)
-
-
-
-app.post(
-  "/listings/:id/reviews",
-  validateReview,
-  wrapAsync(async (req, res) => {
-    try {
-      const { id } = req.params;
-      const listing = await Listing.findById(id);
-      // console.log("Review data:", listing);
-      if (!listing) {
-        return res.status(404).send("Listing not found");
-      }
-      // console.log("Review data:", req.params);
-      const review = new Review(req.body.review);
-      listing.review.push(review);
-
-      await review.save();
-      await listing.save();
-
-      res.redirect(`/listings/${id}`);
-    } catch (error) {
-      console.error("Error creating review:", error);
-      res
-        .status(500)
-        .send("Something went wrong while submitting your review.");
-    }
-  })
-);
-
-//review delete route
-app.delete("/listings/:id/reviews/:reviewId", async (req, res) => {
-  const { id, reviewId } = req.params;
-  const listing = await Listing.findByIdAndUpdate(id, {
-    $pull: { review: reviewId },
-  });
-  await Review.findByIdAndDelete(reviewId);
-
-  res.redirect(`/listings/${id}`);
-  console.log("Listing:", listing);
-});
+app.use("/listings", listings);
+app.use("/listings/:id/reviews", reviews);
 
 // app.get("/listings/:id", async (req, res) => {
 //   let { id } = req.params;
@@ -132,5 +96,5 @@ app.delete("/listings/:id/reviews/:reviewId", async (req, res) => {
 //   res.status(404).send("Please fill the form correctly");
 // });
 app.listen(8080, () => {
-  console.log("Server is running on port 8000");
+  console.log("Server is running on port 8080");
 });

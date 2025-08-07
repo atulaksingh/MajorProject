@@ -1,9 +1,10 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
 const { listingSchema, reviewSchema } = require("../schema");
 const wrapAsync = require("../utils/wrapAsyc");
 const ExpressError = require("../utils/ExpressError");
 const Listing = require("../models/listing");
+const Review = require("../models/review");
 const validateListing = (req, res, next) => {
   const { error } = listingSchema.validate(req.body);
   if (error) {
@@ -16,7 +17,7 @@ const validateListing = (req, res, next) => {
 router.get("/listings/new", (req, res) => {
   res.render("listings/new.ejs");
 });
-
+router.get("/favicon.ico", (req, res) => res.status(204).end());
 //Create Route
 router.post(
   "/",
@@ -72,6 +73,5 @@ router.delete(
     res.redirect("/");
   })
 );
-
 
 module.exports = router;
