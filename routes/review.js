@@ -31,7 +31,7 @@ router.post(
 
       await review.save();
       await listing.save();
-
+req.flash("success", " New Review successfully!");
       res.redirect(`/listings/${id}`);
     } catch (error) {
       console.error("Error creating review:", error);
@@ -49,7 +49,7 @@ router.delete("/:reviewId", async (req, res) => {
     $pull: { review: reviewId },
   });
   await Review.findByIdAndDelete(reviewId);
-
+req.flash("success", " Review Deleted successfully!");
   res.redirect(`/listings/${id}`);
   console.log("Listing:", listing);
 });

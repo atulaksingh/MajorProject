@@ -1,13 +1,13 @@
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
-const Listing = require("./models/listing");
 
 const path = require("path");
 const ejsMate = require("ejs-mate");
 const wrapAsync = require("./utils/wrapAsyc");
 const methodOverride = require("method-override");
 const session = require("express-session");
+const flash = require("connect-flash");
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 app.use(express.urlencoded({ extended: true }));
@@ -19,18 +19,11 @@ const sessionOptions = {
   resave: false,
   saveUninitialized: true,
   cookie: {
-    expires: Date.now() + 7 * 24 * 60 * 60 *1000, // 1 day
-    maxAge: 7 * 24 * 60 * 60 *1000, // 1 day
+    expires: Date.now() + 7 * 24 * 60 * 60 * 1000, // 1 day
+    maxAge: 7 * 24 * 60 * 60 * 1000, // 1 day
     httpOnly: true,
   },
 };
-
-app.use(session(sessionOptions));
-const listings = require("./routes/listing");
-const reviews = require("./routes/review");
-const e = require("express");
-app.use("/", listings);
-
 const mongoURI = "mongodb://127.0.0.1:27017/wanderlust";
 app.use(methodOverride("_method"));
 app.engine("ejs", ejsMate);
@@ -38,21 +31,25 @@ mongoose.connect(mongoURI).then(() => {
   console.log("MongoDB connected successfully");
 });
 
-// mongoose
-//   .connect(mongoURI, {
-//     useNewUrlParser: true,
-//     useUnifiedTopology: true,
-//   })
-//   .then(() => console.log(" MongoDB connected successfully"))
-//   .catch((err) => console.error(" MongoDB connection error:", err));
+app.get("/", (req, res) => {
+  console.log("Home page accessed");
+  res.render("listings/home");
+});
 
-app.get(
-  "/",
-  wrapAsync(async (req, res) => {
-    let allListings = await Listing.find({});
-    res.render("listings", { allListings });
-  })
-);
+app.use(session(sessionOptions));
+app.use(flash());
+
+
+app.use((req, res, next) => {
+  res.locals.success = req.flash("success")|| "";
+  res.locals.error = req.flash("error")|| "";
+  next();
+});
+
+
+
+const listings = require("./routes/listing");
+const reviews = require("./routes/review");
 
 app.get("/favicon.ico", (req, res) => res.status(204).end());
 
