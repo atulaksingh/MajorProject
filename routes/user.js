@@ -6,7 +6,6 @@ const router = express.Router();
 
 router.get("/signup", (req, res) => {
   res.render("users/signup");
-  // res.send("Signup page");
 });
 router.post(
   "/signup",
@@ -38,4 +37,19 @@ router.post(
     res.redirect("/listings");
   }
 );
+
+router.get("/logout", (req, res,next) => {
+  req.logout((err) => {
+    if (err) {
+      console.error("Logout error:", err);
+    return next(err);
+    }
+    req.flash("success", "Logged out successfully!");
+    res.redirect("/listings");
+  });
+});
+
+
+
+
 module.exports = router;

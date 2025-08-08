@@ -5,6 +5,7 @@ const wrapAsync = require("../utils/wrapAsyc");
 const ExpressError = require("../utils/ExpressError");
 const Listing = require("../models/listing");
 const Review = require("../models/review");
+const {isLoggedIn} = require("../middleware");
 const validateListing = (req, res, next) => {
   const { error } = listingSchema.validate(req.body);
   if (error) {
@@ -14,7 +15,8 @@ const validateListing = (req, res, next) => {
   next();
 };
 // New Routes
-router.get("/new", (req, res) => {
+router.get("/new",isLoggedIn,(req, res) => {
+
   res.render("listings/new.ejs");
 });
 router.get("/favicon.ico", (req, res) => res.status(204).end());
@@ -38,6 +40,7 @@ router.get(
 router.post(
   "/",
   validateListing,
+  isLoggedIn,
   wrapAsync(async (req, res) => {
     // try {
     const newListing = new Listing(req.body.listing);
@@ -68,6 +71,7 @@ router.get(
 router.get(
   "/:id/edit",
   validateListing,
+  isLoggedIn,
   wrapAsync(async (req, res) => {
     let { id } = req.params;
     const listing = await Listing.findById(id);
@@ -82,6 +86,7 @@ router.get(
 //Update Route
 router.put(
   "/:id",
+  isLoggedIn,
   wrapAsync(async (req, res) => {
     let { id } = req.params;
     await Listing.findByIdAndUpdate(id, { ...req.body.listing });
@@ -93,6 +98,7 @@ router.put(
 //Delete Route
 router.delete(
   "/:id",
+  isLoggedIn,
   wrapAsync(async (req, res) => {
     let { id } = req.params;
     let deletedListing = await Listing.findByIdAndDelete(id);
