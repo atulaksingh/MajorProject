@@ -1,0 +1,75 @@
+<% layout('/layouts/boilerplate') -%>
+<link
+  href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+  rel="stylesheet"
+/>
+
+<style>
+  .signup-card {
+    background: #fff;
+    border-radius: 12px;
+    border: 1px solid #e4e4e4;
+    padding: 2rem;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+
+  .signup-card h3 {
+    font-weight: 600;
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .btn-airbnb {
+    background-color: #1f5e06;
+    border: none;
+    padding: 0.75rem;
+    border-radius: 8px;
+    font-weight: 600;
+    color: #fff;
+    transition: background-color 0.2s ease;
+  }
+  .btn-airbnb:hover {
+    background-color: #e03150;
+    color: #fff;
+  }
+</style>
+
+<div
+  class="container-fluid d-flex justify-content-center align-items-center"
+  style="min-height: 90vh; overflow-y: hidden"
+>
+  <div class="col-md-5">
+    <div class="signup-card">
+      <h3>Login your account</h3>
+
+      <form action="/login" method="POST" class="needs-validation" novalidate>
+        <div class="mb-3">
+          <label for="username" class="form-label fw-bold">Username</label>
+          <input
+            type="text"
+            class="form-control"
+            id="username"
+            name="username"
+            placeholder="Enter your username"
+            required
+          />
+        </div>
+
+        <div class="mb-3">
+          <label for="password" class="form-label fw-bold">Password</label>
+          <input
+            type="password"
+            class="form-control"
+            id="password"
+            name="password"
+            placeholder="password"
+            required
+          />
+        </div>
+
+        <button type="submit" class="btn btn-airbnb w-100">Login</button>
+      </form>
+    </div>
+  </div>
+</div>
