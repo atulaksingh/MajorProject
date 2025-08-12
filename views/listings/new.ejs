@@ -1,12 +1,43 @@
 <% layout('/layouts/boilerplate') -%>
+<style>
+  .btn-airbnb {
+    background-color: #FF385C;
+    border-color: #FF385C;
+    color: white;
+    font-weight: 500;
+  }
+  .btn-airbnb:hover {
+    background-color: #e03e52;
+    border-color: #e03e52;
+    color: white;
+  }
+  .card-custom {
+    border-radius: 20px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .card-custom:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+  }
+  .form-control {
+    border-radius: 10px;
+    padding: 10px 12px;
+  }
+  .form-label {
+    font-weight: 500;
+    color: #555;
+  }
+</style>
 
 <body class="bg-light">
   <div class="container mt-5">
     <div class="row justify-content-center">
       <div class="col-md-8 col-lg-6">
-        <div class="card shadow-sm border-0 rounded-4">
+        <div class="card shadow-sm border-0 card-custom">
           <div class="card-body p-4">
-            <h3 class="mb-4 text-center text-primary">Create a New Listing</h3>
+            <h3 class="mb-4 text-center" style="color:#FF385C; font-weight:700;">
+              🏠 Create a New Listing
+            </h3>
             <form
               method="POST"
               action="/listings"
@@ -14,7 +45,6 @@
               novalidate
               enctype="multipart/form-data"
             >
-              <!-- Title -->
               <div class="mb-3">
                 <label for="title" class="form-label">Title</label>
                 <input
@@ -22,14 +52,12 @@
                   name="listing[title]"
                   type="text"
                   class="form-control"
-                  placeholder="Enter title"
+                  placeholder="Enter a catchy title"
                   required
                 />
-                <div class="valid-feedback">Looks good!</div>
                 <div class="invalid-feedback">Please input a valid title</div>
               </div>
 
-              <!-- Description -->
               <div class="mb-3">
                 <label for="description" class="form-label">Description</label>
                 <textarea
@@ -37,29 +65,23 @@
                   name="listing[description]"
                   class="form-control"
                   rows="3"
-                  placeholder="Enter description"
+                  placeholder="Describe your place..."
                   required
                 ></textarea>
-                <div class="valid-feedback">Looks good!</div>
-                <div class="invalid-feedback">
-                  Please input a valid Description
-                </div>
+                <div class="invalid-feedback">Please input a valid description</div>
               </div>
 
-    
               <div class="mb-3">
                 <label for="image" class="form-label">Upload Listing Image</label>
-                       <input
+                <input
                   id="image"
                   name="listing[image]"
                   type="file"
                   class="form-control"
-             
+                  required
                 />
-       
               </div>
 
-              <!-- Price -->
               <div class="mb-3">
                 <label for="price" class="form-label">Price (₹)</label>
                 <input
@@ -67,14 +89,12 @@
                   name="listing[price]"
                   type="text"
                   class="form-control"
-                  placeholder="Enter price"
-              
+                  placeholder="price"
+                  required
                 />
-                <div class="valid-feedback">Looks good!</div>
                 <div class="invalid-feedback">Please input a valid price</div>
               </div>
 
-              <!-- Country -->
               <div class="mb-3">
                 <label for="country" class="form-label">Country</label>
                 <input
@@ -82,14 +102,12 @@
                   name="listing[country]"
                   type="text"
                   class="form-control"
-                  placeholder="Enter country"
+                  placeholder="Enter your country"
                   required
                 />
-                <div class="valid-feedback">Looks good!</div>
-                <div class="invalid-feedback">Please input a valid Country</div>
+                <div class="invalid-feedback">Please input a valid country</div>
               </div>
 
-              <!-- Location -->
               <div class="mb-3">
                 <label for="location" class="form-label">Location</label>
                 <input
@@ -97,19 +115,15 @@
                   name="listing[location]"
                   type="text"
                   class="form-control"
-                  placeholder="Enter location"
+                  placeholder="Enter your city or area"
                   required
                 />
-                <div class="valid-feedback">Looks good!</div>
-                <div class="invalid-feedback">
-                  Please input a valid Location
-                </div>
+                <div class="invalid-feedback">Please input a valid location</div>
               </div>
 
-              <!-- Submit -->
               <div class="d-grid">
-                <button type="submit" class="btn btn-primary btn-lg">
-                  Add Listing
+                <button type="submit" class="btn btn-airbnb btn-lg">
+                  ➕ Add Listing
                 </button>
               </div>
             </form>

@@ -1,17 +1,40 @@
-
-
-
-  <% layout('/layouts/boilerplate') -%>
+<% layout('/layouts/boilerplate') -%>
 <link
   href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
   rel="stylesheet"
 />
 
+<style>
+  .listing-card {
+    border-radius: 15px;
+    overflow: hidden;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .listing-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  }
+  .listing-img {
+    height: 230px;
+    object-fit: cover;
+  }
+  .listing-location {
+    font-size: 0.9rem;
+    color: #555;
+  }
+  .listing-price {
+    font-weight: 600;
+    color: #FF385C;
+  }
+</style>
+
 <body class="bg-light">
   <div class="container my-5">
     <div class="d-flex justify-content-between align-items-center mb-4">
-      <h3 class="text-primary">All Listings</h3>
-      <a href="/listings/new" class="btn btn-success">+ Create New Listing</a>
+      <h3 class="fw-bold">Explore Stays</h3>
+      <a href="/listings/new" class="btn btn-dark rounded-pill px-4">
+        + Create Listing
+      </a>
     </div>
 
     <% if (allListings.length === 0) { %>
@@ -21,19 +44,19 @@
     <% } else { %>
       <div class="row g-4">
         <% for (let listing of allListings) { %>
-          <div class="col-md-4">
-            <div class="card h-100 shadow-sm border-0">
+          <div class="col-md-4 col-sm-6">
+            <div class="card listing-card h-100 shadow-sm border-0">
               <img
                 src="<%= listing.image.url %>"
-                class="card-img-top"
+                class="listing-img w-100"
                 alt="Listing Image"
-                style="height: 200px; object-fit: cover;"
               />
               <div class="card-body">
-                <h5 class="card-title"><%= listing.title %></h5>
-                <p class="card-text text-muted"><%= listing.location %>, <%= listing.country %></p>
-                <p class="fw-bold text-primary">₹<%= listing.price %> / night</p>
-                <a href="/listings/<%= listing._id %>" class="btn btn-outline-primary w-100 mt-2">
+                <h5 class="card-title mb-1"><%= listing.title %></h5>
+                <p class="listing-location"><%= listing.location %>, <%= listing.country %></p>
+                <p class="listing-price">₹<%= listing.price %> / night</p>
+                <a href="/listings/<%= listing._id %>"
+                   class="btn btn-outline-dark w-100 rounded-pill mt-2">
                   View Details
                 </a>
               </div>
@@ -44,7 +67,3 @@
     <% } %>
   </div>
 </body>
-
-
-
-  

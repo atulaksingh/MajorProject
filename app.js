@@ -8,6 +8,7 @@ const path = require("path");
 const ejsMate = require("ejs-mate");
 const methodOverride = require("method-override");
 const session = require("express-session");
+const MongoStore = require("connect-mongo");
 const flash = require("connect-flash");
 
 const User = require("./models/user");
@@ -25,8 +26,19 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.static(path.join(__dirname, "public")));
 
+const store = MongoStore.create({
+  mongoUrl: process.env.ATLASDB_URL,
+  touchAfter: 24 * 3600, // time period in seconds
+  crypto: {
+    secret: process.env.SECRET ,
+  },
+});
+store.on("error", function (e) {
+  console.log("Session store error", e);
+});
 const sessionOptions = {
-  secret: "mysupersecretcode",
+  store,
+  secret: process.env.SECRET,
   resave: false,
   saveUninitialized: true,
   cookie: {
@@ -35,16 +47,18 @@ const sessionOptions = {
     httpOnly: true,
   },
 };
-const mongoURI = "mongodb://127.0.0.1:27017/wanderlust";
+
+// const mongoURI = "mongodb://127.0.0.1:27017/wanderlust";
+const dbUrl = process.env.ATLASDB_URL 
 app.use(methodOverride("_method"));
 app.engine("ejs", ejsMate);
-mongoose.connect(mongoURI).then(() => {
+mongoose.connect(dbUrl).then(() => {
   console.log("MongoDB connected successfully");
 });
 
 app.get("/", (req, res) => {
   console.log("Home page accessed");
-  res.render("listings/home");
+  res.send("Welcome to Wanderlust!");
 });
 
 app.use(session(sessionOptions));
