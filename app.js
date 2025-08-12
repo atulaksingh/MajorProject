@@ -82,9 +82,9 @@ app.use((req, res, next) => {
 
 
 
-const listingsRouter = require("./routes/listing");
-const reviewsRouter = require("./routes/review");
-const usersRouter = require("./routes/user");
+const listingsRouter = require("./routes/listings");
+const reviewsRouter = require("./routes/reviews");
+const usersRouter = require("./routes/users");
 app.get("/favicon.ico", (req, res) => res.status(204).end());
 
 app.use("/listings", listingsRouter);
