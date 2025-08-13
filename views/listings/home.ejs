@@ -1,11 +1,10 @@
-<!-- <% layout('/layouts/boilerplate') -%> -->
+<% layout('/layouts/boilerplate') -%>
 
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>Home</title>
-  </head>
-  <body>
-    <h1>Welcome to Wanderlust!</h1>
-  </body>
-</html>
+<div class="container mt-4">
+  <% if (info && info.length) { %>
+  <div class="alert alert-info"><%= info %></div>
+  <% } %>
+  <h1>Welcome to StayFinder!</h1>
+</div>
+
+<%- include('../includes/footer') %>

@@ -56,10 +56,7 @@ mongoose.connect(dbUrl).then(() => {
   console.log("MongoDB connected successfully");
 });
 
-app.get("/", (req, res) => {
-  console.log("Home page accessed");
-  res.send("Welcome to Wanderlust!");
-});
+
 
 app.use(session(sessionOptions));
 app.use(flash());
@@ -76,10 +73,17 @@ passport.deserializeUser(User.deserializeUser());
 app.use((req, res, next) => {
   res.locals.success = req.flash("success")|| "";
   res.locals.error = req.flash("error")|| "";
+   res.locals.info = req.flash("info") || "";
   res.locals.currentUser = req.user;
   next();
 });
-
+app.get("/", (req, res) => {
+  console.log("Home page accessed");
+  // res.send("Welcome to Wanderlust!");
+  //  res.redirect("/listings");
+    req.flash("info", "listings");
+  res.render("listings/home.ejs"); // home.ejs render होगा
+});
 
 
 const listingsRouter = require("./routes/listings");
